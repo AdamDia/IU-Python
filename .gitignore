@@ -11,3 +11,6 @@ venv/
 
 # SQLite database
 *.db
+
+main.html
+
