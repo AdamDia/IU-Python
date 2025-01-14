@@ -1,5 +1,5 @@
 import pandas as pd
-
+from sklearn.metrics import mean_squared_error
 def process_data(engine):
     """
     Generates & Loads training and ideal function data from CSVs and inserts them into the database.
@@ -34,3 +34,26 @@ def process_data(engine):
     ideal_functions_df.to_sql('ideal_functions', engine, if_exists='replace', index=False)
 
     return training_data, ideal_functions_df
+
+def select_ideal_functions(training_data, ideal_functions):
+    """
+    Selects the ideal functions that best fit the training data using Least Squares.
+
+    Args:
+        training_data: DataFrame of training data.
+        ideal_functions: DataFrame of ideal functions.
+
+    Returns:
+        dict: Mapping of training function names to ideal function names.
+    """
+    best_fit = {}
+    for train_col in training_data.columns[1:]:  # Skip the 'X' column
+        min_error = float('inf')
+        best_func = None
+        for ideal_col in ideal_functions.columns[1:]:  # Skip the 'X' column
+            error = mean_squared_error(training_data[train_col], ideal_functions[ideal_col])
+            if error < min_error:
+                min_error = error
+                best_func = ideal_col
+        best_fit[train_col] = best_func
+    return best_fit
