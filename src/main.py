@@ -1,3 +1,8 @@
+import sys
+from pathlib import Path
+
+# Add the project root directory to the Python path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 from src.database import setup_database
 from src.data_processor import process_data
 from src.visualizer import visualize_data
